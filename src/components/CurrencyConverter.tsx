@@ -4,7 +4,7 @@ import { HiArrowsRightLeft } from "react-icons/hi2";
 import useFetchApi from "../hooks/useFetchApi";
 import Dropdown from "./Dropdown";
 
-const CurrencyConvertor: React.FC = () => {
+const CurrencyConverter: React.FC = () => {
   const [amount, setAmount] = useState<string>("1");
   const [fromCurrency, setFromCurrency] = useState<string>("INR");
   const [toCurrency, setToCurrency] = useState<string>("USD");
@@ -120,4 +120,4 @@ const CurrencyConvertor: React.FC = () => {
   );
 };
 
-export default CurrencyConvertor;
+export default CurrencyConverter;
