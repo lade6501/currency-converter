@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { HiArrowsRightLeft } from "react-icons/hi2";
+import { HiArrowsRightLeft, HiSun, HiMiniMoon } from "react-icons/hi2";
 
 import useFetchApi from "../hooks/useFetchApi";
 import Dropdown from "./Dropdown";
@@ -11,6 +11,7 @@ const CurrencyConverter: React.FC = () => {
   const [favourites, setFavourites] = useState<string[]>([]);
   const [convertedAmount, setConvertedAmount] = useState<string | null>(null);
   const [converting, setConverting] = useState(false);
+  const [themeTogglor, setThemeTogglor] = useState(false);
 
   const { data: currencies, fetchData: fetchCurrencyData } = useFetchApi(
     import.meta.env.VITE_CURRENCIES_ENDPOINT
@@ -40,6 +41,11 @@ const CurrencyConverter: React.FC = () => {
     setToCurrency(fromCurrency);
   };
 
+  const darkModeHandler = () => {
+    setThemeTogglor(!themeTogglor);
+    document.body.classList.toggle("dark");
+  };
+
   useEffect(() => {
     fetchCurrencyData();
   }, []);
@@ -59,6 +65,17 @@ const CurrencyConverter: React.FC = () => {
         <h2 className="text-2xl font-semibold text-gray-700 dark:text-white">
           Currency Converter
         </h2>
+        <button
+          animate-bounce
+          onClick={darkModeHandler}
+          className="p-2 bg-gray-300 rounded-full cursor-pointer hover:bg-gray-500 dark:bg-gray-700 dark:hover:bg-gray-400"
+        >
+          {themeTogglor ? (
+            <HiSun size={20} fill="yellow" />
+          ) : (
+            <HiMiniMoon size={20} />
+          )}
+        </button>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 items-end">
