@@ -4,6 +4,16 @@ import { HiArrowsRightLeft, HiSun, HiMiniMoon } from "react-icons/hi2";
 import useFetchApi from "../hooks/useFetchApi";
 import Dropdown from "./Dropdown";
 
+// Define the expected structure of the conversion data
+interface ConversionData {
+  amount: number;
+  base: string;
+  date: string;
+  rates: {
+    [currency: string]: number;
+  };
+}
+
 const CurrencyConverter: React.FC = () => {
   const [amount, setAmount] = useState<string>("1");
   const [fromCurrency, setFromCurrency] = useState<string>("INR");
@@ -21,7 +31,7 @@ const CurrencyConverter: React.FC = () => {
     data: conversionData,
     loading,
     fetchData,
-  } = useFetchApi(
+  } = useFetchApi<ConversionData | null>(
     `${
       import.meta.env.VITE_CONVERSION_ENDPOINT
     }?amount=${amount}&from=${fromCurrency}&to=${toCurrency}`

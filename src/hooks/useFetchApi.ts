@@ -2,7 +2,7 @@ import { useState, useCallback, useMemo } from "react";
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 
 interface ApiState<T> {
-  data: T | {};
+  data: T | null;
   loading: boolean;
   error: Error | null;
   fetchData: () => Promise<void>;
@@ -12,7 +12,7 @@ const useFetchApi = <T>(
   url: string,
   options?: AxiosRequestConfig
 ): ApiState<T> => {
-  const [data, setData] = useState<T | {}>({});
+  const [data, setData] = useState<T | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<Error | null>(null);
 
