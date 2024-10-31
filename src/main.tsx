@@ -11,7 +11,7 @@ createRoot(document.getElementById("root")!).render(
         path: "/",
         secure: true,
         sameSite: true,
-        httpOnly: true,
+        httpOnly: false,
       }}
     >
       <App />
