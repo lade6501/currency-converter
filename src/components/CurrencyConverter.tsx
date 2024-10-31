@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { HiArrowsRightLeft, HiSun, HiMiniMoon } from "react-icons/hi2";
 
 import useFetchApi from "../hooks/useFetchApi";
 import Dropdown from "./Dropdown";
+import { useCookies } from "react-cookie";
 
 // Define the expected structure of the conversion data
 interface ConversionData {
@@ -15,10 +16,10 @@ interface ConversionData {
 }
 
 const CurrencyConverter: React.FC = () => {
+  const [cookies, setCookie] = useCookies(["favorites"]);
   const [amount, setAmount] = useState<string>("1");
   const [fromCurrency, setFromCurrency] = useState<string>("INR");
   const [toCurrency, setToCurrency] = useState<string>("USD");
-  const [favourites, setFavourites] = useState<string[]>([]);
   const [convertedAmount, setConvertedAmount] = useState<string | null>(null);
   const [converting, setConverting] = useState(false);
   const [themeTogglor, setThemeTogglor] = useState(false);
@@ -37,8 +38,15 @@ const CurrencyConverter: React.FC = () => {
     }?amount=${amount}&from=${fromCurrency}&to=${toCurrency}`
   );
 
+  const getFavouritesFromCookies = useCallback(() => {
+    const cookieValue = cookies.favorites;
+    return cookieValue ? cookieValue : [];
+  }, [cookies.favorites]);
+
+  const favouritesCurrencies = getFavouritesFromCookies();
+
   const handleFavorite = (currency: string) => {
-    setFavourites([...favourites, currency]);
+    setCookie("favorites", [...favouritesCurrencies, currency]);
   };
 
   const convertCurrency = () => {
@@ -94,7 +102,7 @@ const CurrencyConverter: React.FC = () => {
           title="From"
           currency={fromCurrency}
           setCurrency={setFromCurrency}
-          favourite={favourites}
+          favourite={favouritesCurrencies}
           handleFavorite={handleFavorite}
         />
         {/* show switch icon */}
@@ -111,7 +119,7 @@ const CurrencyConverter: React.FC = () => {
           title="To"
           currency={toCurrency}
           setCurrency={setToCurrency}
-          favourite={favourites}
+          favourite={favouritesCurrencies}
           handleFavorite={handleFavorite}
         />
       </div>
