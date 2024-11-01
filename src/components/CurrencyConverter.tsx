@@ -46,7 +46,19 @@ const CurrencyConverter: React.FC = () => {
   const favouritesCurrencies = getFavouritesFromCookies();
 
   const handleFavorite = (currency: string) => {
-    setCookie("favorites", [...favouritesCurrencies, currency]);
+    const existingFavourite = favouritesCurrencies.find(
+      (item: string) => item.toLowerCase() === currency.toLowerCase()
+    );
+    if (existingFavourite) {
+      setCookie(
+        "favorites",
+        favouritesCurrencies.filter(
+          (item: string) => item.toLowerCase() !== currency.toLowerCase()
+        )
+      );
+    } else {
+      setCookie("favorites", [...favouritesCurrencies, currency]);
+    }
   };
 
   const convertCurrency = () => {
