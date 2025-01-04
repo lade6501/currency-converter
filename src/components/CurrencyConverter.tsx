@@ -62,7 +62,7 @@ const CurrencyConverter: React.FC = () => {
   };
 
   const convertCurrency = () => {
-    setConverting(loading);
+    setConverting(true);
     fetchData();
   };
 
@@ -81,7 +81,6 @@ const CurrencyConverter: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    setConverting(!loading);
     if (!loading) {
       setConvertedAmount(
         `Converted amount is ${conversionData?.rates[toCurrency]} ${toCurrency}`
