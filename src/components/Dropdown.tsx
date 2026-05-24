@@ -2,14 +2,24 @@ import React from "react";
 import { HiOutlineStar } from "react-icons/hi";
 import { HiMiniStar } from "react-icons/hi2";
 
+export type Currency = {
+  iso_code: string;
+  iso_numeric: string;
+  name: string;
+  symbol: string;
+  start_date: string;
+  end_date: string;
+};
+
 interface Props {
-  currencies: string[];
+  currencies: Currency[];
   currency: string;
   setCurrency: (string: string) => void;
   favourite: string[];
   handleFavorite: (string: string) => void;
   title: string;
 }
+
 const Dropdown: React.FC<Props> = ({
   currencies,
   currency,
@@ -38,9 +48,9 @@ const Dropdown: React.FC<Props> = ({
             </option>
           ))}
           <hr />
-          {currencies?.map((currency: string) => (
-            <option value={currency} key={currency}>
-              {currency}
+          {currencies?.map((currency: Currency) => (
+            <option value={currency.iso_code} key={currency.iso_code}>
+              {currency.iso_code}
             </option>
           ))}
         </select>
@@ -48,8 +58,6 @@ const Dropdown: React.FC<Props> = ({
           className="absolute inset-y-0 right-0 pr-5 flex items-center text-sm leading-5"
           onClick={() => handleFavorite(currency)}
         >
-          {/* <HiOutlineStar  size={20} /> */}
-
           {favourite.includes(currency) ? (
             <HiMiniStar fill="green" size={20} />
           ) : (

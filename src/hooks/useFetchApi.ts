@@ -10,13 +10,12 @@ interface ApiState<T> {
 
 const useFetchApi = <T>(
   url: string,
-  options?: AxiosRequestConfig
+  options?: AxiosRequestConfig,
 ): ApiState<T> => {
   const [data, setData] = useState<T | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<Error | null>(null);
 
-  // Memoize the fetchData function using useCallback
   const fetchData = useCallback(async () => {
     setLoading(true);
     setError(null);
@@ -30,10 +29,9 @@ const useFetchApi = <T>(
     }
   }, [url, options]);
 
-  // Memoize the return value to prevent unnecessary re-renders
   return useMemo(
     () => ({ data, loading, error, fetchData }),
-    [data, loading, error, fetchData]
+    [data, loading, error, fetchData],
   );
 };
 
