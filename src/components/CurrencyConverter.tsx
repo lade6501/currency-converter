@@ -2,17 +2,14 @@ import React, { useCallback, useEffect, useState } from "react";
 import { HiArrowsRightLeft, HiSun, HiMiniMoon } from "react-icons/hi2";
 
 import useFetchApi from "../hooks/useFetchApi";
-import Dropdown from "./Dropdown";
+import Dropdown, { Currency } from "./Dropdown";
 import { useCookies } from "react-cookie";
 
-// Define the expected structure of the conversion data
 interface ConversionData {
-  amount: number;
+  quote: string;
   base: string;
   date: string;
-  rates: {
-    [currency: string]: number;
-  };
+  rate: number;
 }
 
 const CurrencyConverter: React.FC = () => {
@@ -24,18 +21,20 @@ const CurrencyConverter: React.FC = () => {
   const [converting, setConverting] = useState(false);
   const [themeTogglor, setThemeTogglor] = useState(false);
 
-  const { data: currencies, fetchData: fetchCurrencyData } = useFetchApi(
-    import.meta.env.VITE_CURRENCIES_ENDPOINT
-  );
+  const BASE_URL = import.meta.env.VITE_BASE_ENDPOINT;
+
+  const {
+    data: currencies,
+    fetchData: fetchCurrencyData,
+    loading: currenciesLoading,
+  } = useFetchApi(`${BASE_URL}currencies`);
 
   const {
     data: conversionData,
     loading,
     fetchData,
   } = useFetchApi<ConversionData | null>(
-    `${
-      import.meta.env.VITE_CONVERSION_ENDPOINT
-    }?amount=${amount}&from=${fromCurrency}&to=${toCurrency}`
+    `${BASE_URL}rate/${fromCurrency}/${toCurrency}`,
   );
 
   const getFavouritesFromCookies = useCallback(() => {
@@ -47,14 +46,14 @@ const CurrencyConverter: React.FC = () => {
 
   const handleFavorite = (currency: string) => {
     const existingFavourite = favouritesCurrencies.find(
-      (item: string) => item.toLowerCase() === currency.toLowerCase()
+      (item: string) => item.toLowerCase() === currency.toLowerCase(),
     );
     if (existingFavourite) {
       setCookie(
         "favorites",
         favouritesCurrencies.filter(
-          (item: string) => item.toLowerCase() !== currency.toLowerCase()
-        )
+          (item: string) => item.toLowerCase() !== currency.toLowerCase(),
+        ),
       );
     } else {
       setCookie("favorites", [...favouritesCurrencies, currency]);
@@ -81,12 +80,22 @@ const CurrencyConverter: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (!loading) {
-      setConvertedAmount(
-        `Converted amount is ${conversionData?.rates[toCurrency]} ${toCurrency}`
-      );
+    if (!loading && conversionData) {
+      const result = parseFloat(amount) * conversionData?.rate;
+
+      setConvertedAmount(`Converted amount is ${result} ${toCurrency}`);
     }
   }, [conversionData, loading]);
+
+  if (currenciesLoading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <h2 className="text-2xl font-semibold text-gray-700 dark:text-white">
+          Loading...
+        </h2>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-xl mx-auto my-10 p-5 bg-white rounded-lg shadow-md dark:bg-gray-600">
@@ -109,7 +118,7 @@ const CurrencyConverter: React.FC = () => {
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 items-end">
         <Dropdown
-          currencies={Object.keys(currencies || {})}
+          currencies={currencies as Currency[]}
           title="From"
           currency={fromCurrency}
           setCurrency={setFromCurrency}
@@ -126,7 +135,7 @@ const CurrencyConverter: React.FC = () => {
           </button>
         </div>
         <Dropdown
-          currencies={Object.keys(currencies || {})}
+          currencies={currencies as Currency[]}
           title="To"
           currency={toCurrency}
           setCurrency={setToCurrency}
