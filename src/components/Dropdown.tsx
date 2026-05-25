@@ -29,39 +29,67 @@ const Dropdown: React.FC<Props> = ({
   title,
 }) => {
   return (
-    <div>
+    <div className="flex flex-col gap-1.5 w-full">
       <label
         htmlFor={title}
-        className="block text-sm font-medium text-gray-700 dark:text-white"
+        className="text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500"
       >
         {title}
       </label>
-      <div className="mt-1 relative">
+      <div className="relative rounded-xl shadow-sm transition-all duration-200 hover:shadow-md">
         <select
+          id={title}
           onChange={(e) => setCurrency(e.target.value)}
           value={currency}
-          className="w-full p-2 border border-gray-300 bg-gray-200 rounded-md shadow-md focus:outline-none foucs:ring-2 focus:ring-indigo-500"
+          className="w-full pl-4 pr-12 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-800 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100 font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all cursor-pointer"
         >
-          {favourite?.map((favorite: string) => (
-            <option value={favorite} key={favorite}>
-              {favorite}
-            </option>
-          ))}
-          <hr />
-          {currencies?.map((currency: Currency) => (
-            <option value={currency.iso_code} key={currency.iso_code}>
-              {currency.iso_code}
+          {favourite && favourite.length > 0 && (
+            <>
+              {favourite.map((favorite: string) => (
+                <option
+                  value={favorite}
+                  key={`fav-${favorite}`}
+                  className="bg-white dark:bg-gray-800 font-semibold text-indigo-600 dark:text-indigo-400"
+                >
+                  ⭐ {favorite.toUpperCase()}
+                </option>
+              ))}
+              <option disabled className="text-gray-300 dark:text-gray-600">
+                ──────────
+              </option>
+            </>
+          )}
+          {currencies?.map((curr: Currency) => (
+            <option
+              value={curr.iso_code}
+              key={curr.iso_code}
+              className="bg-white dark:bg-gray-800"
+            >
+              {curr.iso_code} — {curr.name || curr.iso_code}
             </option>
           ))}
         </select>
+
         <button
-          className="absolute inset-y-0 right-0 pr-5 flex items-center text-sm leading-5"
+          type="button"
+          className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-amber-500 dark:hover:text-amber-400 transition-transform duration-200 active:scale-90"
           onClick={() => handleFavorite(currency)}
+          title={
+            favourite.includes(currency)
+              ? "Remove from Favorites"
+              : "Add to Favorites"
+          }
         >
           {favourite.includes(currency) ? (
-            <HiMiniStar fill="green" size={20} />
+            <HiMiniStar
+              className="text-amber-500 dark:text-amber-400 scale-110 animate-pulse-once"
+              size={22}
+            />
           ) : (
-            <HiOutlineStar size={20} />
+            <HiOutlineStar
+              className="hover:scale-110 transition-transform"
+              size={22}
+            />
           )}
         </button>
       </div>
